@@ -26,7 +26,7 @@ ActiveRecord::Schema.define(version: 2019_02_24_145221) do
   end
 
   create_table "sales", force: :cascade do |t|
-    t.string "consumerName"
+    t.string "consumer_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

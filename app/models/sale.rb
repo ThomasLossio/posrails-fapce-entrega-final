@@ -1,10 +1,10 @@
 class Sale < ApplicationRecord
 	has_many :sale_items
 
-	validates :consumerName, presence: true
+	validates :consumer_name, presence: true
 
 	def nil_fields?
-		self.consumerName.nil?
+		self.consumer_name.nil?
 	end
 
 end

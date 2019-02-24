@@ -18,7 +18,7 @@ class Api::V1::SalesController < ApplicationController
 
 	def create
 		sale = Sale.new (sale_params)
-		sale.consumerName = params[:consumerName]
+		sale.consumer_name = params[:consumer_name]
 
 		if sale.save
 			render json: sale, status: 201 and return
@@ -38,7 +38,7 @@ class Api::V1::SalesController < ApplicationController
 			render json: {message: "Sale not found"}, status: :not_found and return
 		end
 
-		@sale.consumerName = params[:consumerName]
+		@sale.consumer_name = params[:consumer_name]
 
 		if @sale.update (sale_params)
 			render json: @sale, status: :ok and return
@@ -60,12 +60,30 @@ class Api::V1::SalesController < ApplicationController
 		end
 	end
 
+	def total_sales
+		sales = Sale.all
+		arr = []
+		consumer_name = [{}]
+		
+		sales.each do |sale|
+			totalValue = 0.0
+			sale.sale_items.each do |total|
+				totalValue = totalValue + total.value
+			end
+			consumer_name.push({"consumer_name" => sale.consumer_name, "total": totalValue})		
+		end
+		
+			#consumer_name.push({"consumerName" => sale.consumer_name, "total": sale.sale_items})
+		
+		render json: consumer_name, status: :ok
+	end
+
 	private
 	def find_sale
 		@sale = Sale.find_by_id(params[:id])
 	end
 
 	def sale_params
-		params.permit(:consumerName)
+		params.permit(:consumer_name)
 	end
 end
