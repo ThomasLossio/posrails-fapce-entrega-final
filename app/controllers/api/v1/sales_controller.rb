@@ -10,7 +10,7 @@ class Api::V1::SalesController < ApplicationController
 
 	def show
 		if @sale.nil?
-			render json: {"message": "Sale not found"}, status: :not_found
+			render json: {message: "Sale not found"}, status: :not_found
 		else
 			render json: @sale, status: :ok
 		end
@@ -35,12 +35,29 @@ class Api::V1::SalesController < ApplicationController
 	
 	def update
 		if @sale.nil?
-			render json: {"message": "Sale not found"}, status: :not_found and return
+			render json: {message: "Sale not found"}, status: :not_found and return
 		end
+
+		@sale.consumerName = params[:consumerName]
+
+		if @sale.update (sale_params)
+			render json: @sale, status: :ok and return
+		elsif @sale.nil_fields?
+			error_status = :bad_request
+		else
+			error_status = :unprocessable_entity
+		end
+
+		render json: {message: "Sale not updated", errors: @sale.errors}, status: error_status
+			
 	end
 
 	def destroy
-	
+		if @sale.nil?
+			render json: {message: 'Sale not found'}, status: :not_found
+		else
+			@sale.destroy
+		end
 	end
 
 	private
