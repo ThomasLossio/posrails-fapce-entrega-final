@@ -62,20 +62,36 @@ class Api::V1::SalesController < ApplicationController
 
 	def total_sales
 		sales = Sale.all
-		arr = []
-		consumer_name = [{}]
+		consumer_name = []
 		
 		sales.each do |sale|
 			totalValue = 0.0
 			sale.sale_items.each do |total|
-				totalValue = totalValue + total.value
+				totalValue = totalValue + (total.value * total.quantity)
 			end
 			consumer_name.push({"consumer_name" => sale.consumer_name, "total": totalValue})		
 		end
-		
+			
 			#consumer_name.push({"consumerName" => sale.consumer_name, "total": sale.sale_items})
 		
-		render json: consumer_name, status: :ok
+		render json: consumer_name.sort_by { |k| -k[:total] }, status: :ok
+	end
+
+	def items_quantity
+		sales = Sale.all
+		consumer_name = []
+		
+		sales.each do |sale|
+			totalQuantity = 0
+			sale.sale_items.each do |total|
+				totalQuantity = totalQuantity + total.quantity
+			end
+			consumer_name.push({"consumer_name" => sale.consumer_name, "quantity": totalQuantity})		
+		end
+			
+			#consumer_name.push({"consumerName" => sale.consumer_name, "total": sale.sale_items})
+		
+		render json: consumer_name.sort_by { |k| -k[:quantity] }, status: :ok
 	end
 
 	private
